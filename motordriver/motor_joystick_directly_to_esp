@@ -1,0 +1,83 @@
+/*
+  Blink
+*/
+
+// ledPin refers to ESP32 GPIO 23
+const int ENA = 21;
+const int IN1 = 18;
+const int IN2 = 19;
+const int ENB = 25;
+const int IN3 = 26;
+const int IN4 = 27;
+//ESP Interfacing Pins
+int throttle = 1740; // take value from joystick , range from 0-4095
+int steer = 1740; // take value from joystick , for left-right, range from 0-4095 
+
+// the setup function runs once when you press reset or power the board
+void setup() {
+  // initialize digital pin ledPin as an output.
+  pinMode(ENA, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(ENB, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+  
+}
+
+// M1 = left motor, ENA,IN1,IN2
+//M2 = right motor, enB,IN3,IN4
+
+void M1DF(int spd){ // motor 1 digital forward
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  analogWrite(ENA,spd);
+}
+
+void M2DF(int spd){ // motor 2 digital forward
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  analogWrite(ENB,spd);
+}
+
+void M1DB(int spd){ // motor 1 digital backward
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  analogWrite(ENA,spd);
+}
+
+void M2DB(int spd){ // motor 2 digital backward
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+  analogWrite(ENB,spd);
+}
+
+void botmove(int throttle,int steer){
+  throttle = map(throttle,0,4095,-250,250);
+  steer = map(steer,0,4095,-250,250);
+  if (throttle<0){
+    int rightMotorSpeed, leftMotorSpeed;
+    rightMotorSpeed =  abs(throttle) - steer;
+    leftMotorSpeed =  abs(throttle) + steer;
+    rightMotorSpeed = constrain(rightMotorSpeed, 0, 255);
+    leftMotorSpeed = constrain(leftMotorSpeed, 0, 255);
+    M1DB(leftMotorSpeed);
+    M2DB(rightMotorSpeed);
+  }
+  else if (throttle>=0){
+    int rightMotorSpeed, leftMotorSpeed;
+    rightMotorSpeed =  abs(throttle) - steer;
+    leftMotorSpeed =  abs(throttle) + steer;
+    rightMotorSpeed = constrain(rightMotorSpeed, 0, 255);
+    leftMotorSpeed = constrain(leftMotorSpeed, 0, 255);
+    M1DF(leftMotorSpeed);
+    M2DF(rightMotorSpeed);
+  }
+}
+
+
+// the loop function runs over and over again forever
+void loop() {
+    throttle = analogRead(34);//get from joy
+    steer = analogRead(35);// get from joy
+    botmove(throttle,steer);
