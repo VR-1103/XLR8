@@ -10,10 +10,9 @@ const int ENB = 25;
 const int IN3 = 26;
 const int IN4 = 27;
 //ESP Interfacing Pins
-int xvalue;
-int throttle = 1740; // take value from joystick , range from 0-4095
-int steer = 1740; // take value from joystick , for left-right, range from 0-4095 
-
+int throttle = 1840; // take value from joystick , range from 0-4095
+int steer = 1840; // take value from joystick , for left-right, range from 0-4095 
+int nthrottle,nsteer;
 // the setup function runs once when you press reset or power the board
 void setup() {
   // initialize digital pin ledPin as an output.
@@ -23,6 +22,7 @@ void setup() {
   pinMode(ENB, OUTPUT);
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
+//  Serial.begin(1200);
   
 }
 
@@ -54,23 +54,42 @@ void M2DB(int spd){ // motor 2 digital backward
 }
 
 void botmove(int throttle,int steer){
-  throttle = map(throttle,0,4095,-250,250);
-  steer = map(steer,0,4095,-250,250);
-  if (throttle<0){
-    int rightMotorSpeed, leftMotorSpeed;
-    rightMotorSpeed =  abs(throttle) - steer;
-    leftMotorSpeed =  abs(throttle) + steer;
-    rightMotorSpeed = constrain(rightMotorSpeed, 0, 255);
-    leftMotorSpeed = constrain(leftMotorSpeed, 0, 255);
+  if(throttle<1850 && throttle>1750 && steer>1750 && steer<1850){
+    nthrottle = 0;
+    nsteer = 0;
+  }
+
+  if(throttle<=1750){
+    nthrottle = map(throttle,0,1750,-250,0);
+  }
+  else if(throttle>=1850){
+    nthrottle = map(throttle,1850,4095,0,250);
+  }  
+  if(steer<=1750){
+    nsteer = map(steer,0,1750,-250,0);
+  }
+  else if(steer>=1850){
+    nsteer = map(steer,1850,4095,0,250);
+  }
+//  Serial.print(nthrottle);
+//  Serial.print("\t");
+//  Serial.print(nsteer);
+//  Serial.println();
+  int rightMotorSpeed, leftMotorSpeed;
+  rightMotorSpeed =  abs(nthrottle) - nsteer;
+  leftMotorSpeed =  abs(nthrottle) + nsteer;
+  rightMotorSpeed = constrain(rightMotorSpeed, 0, 255);
+  leftMotorSpeed = constrain(leftMotorSpeed, 0, 255);
+
+  if (nthrottle<0){
     M1DB(leftMotorSpeed);
     M2DB(rightMotorSpeed);
   }
-  else if (throttle>=0){
-    int rightMotorSpeed, leftMotorSpeed;
-    rightMotorSpeed =  abs(throttle) - steer;
-    leftMotorSpeed =  abs(throttle) + steer;
-    rightMotorSpeed = constrain(rightMotorSpeed, 0, 255);
-    leftMotorSpeed = constrain(leftMotorSpeed, 0, 255);
+  else if (nthrottle==0 && nsteer == 0){
+    M1DF(0);
+    M2DF(0);
+  }
+  else if (nthrottle>=0){
     M1DF(leftMotorSpeed);
     M2DF(rightMotorSpeed);
   }
@@ -79,7 +98,7 @@ void botmove(int throttle,int steer){
 
 // the loop function runs over and over again forever
 void loop() {
-    throttle = //get from joy
-    steer = // get from joy
+    throttle = analogRead(34);//get from joy
+    steer = analogRead(35);// get from joy
     botmove(throttle,steer);
 }
