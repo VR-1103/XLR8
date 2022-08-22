@@ -13,6 +13,8 @@ void setup() {
   pinMode(EN, OUTPUT);
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
+  pinMode(34, INPUT);
+  pinMode(35, INPUT);
 }
 
 // the loop function runs over and over again forever

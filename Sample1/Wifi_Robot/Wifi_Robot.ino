@@ -82,14 +82,14 @@ void loop() {
       else if (command == "S") stopRobot();
 }
 
-void HTTP_handleRoot(void) {
-
-if( server.hasArg("State") ){
-       Serial.println(server.arg("State"));
-  }
-  server.send ( 200, "text/html", "" );
-  delay(1);
-}
+//void HTTP_handleRoot(void) {
+//
+//if( server.hasArg("State") ){
+//       Serial.println(server.arg("State"));
+//  }
+//  server.send ( 200, "text/html", "" );
+//  delay(1);
+//}
 
 void goForword(){ 
 
