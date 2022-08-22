@@ -17,11 +17,11 @@ void loop(){
 int cmd()
 {
   // put your main code here, to run repeatedly:
-//  Serial.print("X: ");
-//  Serial.print(analogRead(34));
-//  Serial.print(" Y: ");
-//  Serial.print(analogRead(35));
-//  Serial.println();
+  Serial.print("X: ");
+  Serial.print(analogRead(34));
+  Serial.print(" Y: ");
+  Serial.print(analogRead(35));
+  Serial.println();
   if ((abs(analogRead(34)-1740)<100) and (abs(analogRead(35)-1740)<100)){
       return 0;
     }
