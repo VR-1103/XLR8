@@ -82,13 +82,13 @@ void DBACKWARD(){
 }
 
 void DLEFT(){
-  M1DB(spd);
-  M2DF(spd);
+  M1DB(100);
+  M2DF(100);
 }
 
 void DRIGHT(){
-  M1DF(spd);
-  M2DB(spd);
+  M1DF(100);
+  M2DB(100);
 }
 
 void STOP(){
