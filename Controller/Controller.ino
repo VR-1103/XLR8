@@ -11,22 +11,22 @@
 #include <esp_now.h>
 #include <WiFi.h>
 
-/*Conntect Joystick Y axis to analog pin 35 and X asix to analog pin 34
- * and button to digital pin 8
-*/
-
-int JoyStick_X = 34; // Analog Pin  X
-int JoyStick_Y = 35; // // Analog Pin  Y
-int JoyStick_button = 8; // IO Pin
-
+// Variables for test data
+int int_value;
+float float_value;
+bool bool_value = true;
+int JoyStick_X = 35; // Analog Pin  X
+int JoyStick_Y = 34; // // Analog Pin  Y
 
 // MAC Address of responder - edit as required
 uint8_t broadcastAddress[] = {0x0C, 0xB8, 0x15, 0xF5, 0x9F, 0xD4};
 
 // Define a data structure
 typedef struct struct_message {
-  int switc; //0- digital 1- analog
-  int x ,y,command; 
+
+  int x,y,cmd;
+
+
 } struct_message;
 
 // Create a structured object
@@ -45,14 +45,12 @@ void setup() {
   
   // Set up Serial Monitor
   Serial.begin(115200);
-  
-  //setting pin modes
-  pinMode(JoyStick_X, INPUT);
-  pinMode(JoyStick_Y, INPUT);
-  pinMode(JoyStick_button, INPUT_PULLUP);
- 
+
+  pinMode(JoyStick_X,INPUT);
+  pinMode(JoyStick_Y,INPUT);
   // Set ESP32 as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
+
   // Initilize ESP-NOW
   if (esp_now_init() != ESP_OK) {
     Serial.println("Error initializing ESP-NOW");
@@ -77,17 +75,22 @@ void setup() {
 void loop() {
 
   // Create test data
-
   int x = analogRead(JoyStick_X); //  X
   int y = analogRead(JoyStick_Y); //  Y
-  int button = digitalRead(JoyStick_button); // 
+  // Generate a random integer
+  int_value = random(1,20);
 
+  // Use integer to make a new float
+  float_value = 1.3 * int_value;
+
+  // Invert the boolean value
+  bool_value = !bool_value;
+  
   // Format structured data
   myData.x = x;
   myData.y = y;
-  myData.switc = button;
-  myData.command =cmd();
-  
+  myData.cmd = cmd();
+  Serial.println(myData.cmd);
   // Send message via ESP-NOW
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
    
@@ -97,30 +100,50 @@ void loop() {
   else {
     Serial.println("Sending error");
   }
-  delay(10);
+  
+  delay(2000);
 }
-
 int cmd()
 {
+  int valX=digi(analogRead(34));
+  int valY = digi(analogRead(35));
   // put your main code here, to run repeatedly:
   Serial.print("X: ");
-  Serial.print(analogRead(34));
+  Serial.print(valX);
   Serial.print(" Y: ");
-  Serial.print(analogRead(35));
+  Serial.print(valY);
   Serial.println();
-  if ((abs(analogRead(34)-1740)<100) and (abs(analogRead(35)-1740)<100)){
+  if ((valX==1)and (valY==1)){
       return 0;
     }
-  if ((abs(analogRead(34)-1740)<100) and (abs(analogRead(35))<100)){
+  if ((valX==1)and (valY==2)){
       return 1;
     }
-  if ((abs(analogRead(34)-1740)<100) and (abs(analogRead(35)-4095)<100)){
+  if ((valX==2)and (valY==2)){
       return 2;
     }
-  if ((abs(analogRead(34))<100) and (abs(analogRead(35)-1740)<100)){
+  if ((valX==2)and (valY==1)){
       return 3;
     }
-  if ((abs(analogRead(34)-4095)<100) and (abs(analogRead(35)-1740)<100)){
-     return 4;
+  if ((valX==2)and (valY==0)){
+      return 4;
     }
+  if ((valX==1)and (valY==0)){
+      return 5;
+    }
+  if ((valX==0)and (valY==0)){
+      return 6;
+    }
+  if ((valX==0)and (valY==1)){
+      return 7;
+    }
+  if ((valX==0)and (valY==2)){
+      return 8;
+    }
+}
+int digi(int analval){
+    if ( analval < 200)  return 0;
+    if((analval  >1500)and (analval<2000))  return 1;
+    if (analval >3800) return 2;
+    else return 3;
 }
