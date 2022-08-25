@@ -101,7 +101,6 @@ void loop() {
     Serial.println("Sending error");
   }
   
-  delay(10);
 }
 int cmd()
 {
