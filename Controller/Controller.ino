@@ -12,12 +12,9 @@
 #include <WiFi.h>
 
 // Variables for test data
-int int_value;
-float float_value;
-bool bool_value = true;
 int JoyStick_X = 35; // Analog Pin  X
 int JoyStick_Y = 34; // // Analog Pin  Y
-
+int SpeedPin = 32 ; 
 // MAC Address of responder - edit as required
 uint8_t broadcastAddress[] = {0x0C, 0xB8, 0x15, 0xF5, 0x9F, 0xD4};
 
@@ -25,7 +22,7 @@ uint8_t broadcastAddress[] = {0x0C, 0xB8, 0x15, 0xF5, 0x9F, 0xD4};
 typedef struct struct_message {
 
   int x,y,cmd;
-
+  int spid;
 
 } struct_message;
 
@@ -77,20 +74,16 @@ void loop() {
   // Create test data
   int x = analogRead(JoyStick_X); //  X
   int y = analogRead(JoyStick_Y); //  Y
-  // Generate a random integer
-  int_value = random(1,20);
+  int speedraw = analogRead(SpeedPin); 
 
-  // Use integer to make a new float
-  float_value = 1.3 * int_value;
-
-  // Invert the boolean value
-  bool_value = !bool_value;
   
   // Format structured data
   myData.x = x;
   myData.y = y;
   myData.cmd = cmd();
+  myData.spid=map(speedraw,0,4095,0,5);;
   Serial.println(myData.cmd);
+  Serial.println(myData.spid);
   // Send message via ESP-NOW
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
    
@@ -100,7 +93,7 @@ void loop() {
   else {
     Serial.println("Sending error");
   }
-  
+  delay(50);
 }
 int cmd()
 {
@@ -139,6 +132,7 @@ int cmd()
   if ((valX==0)and (valY==2)){
       return 8;
     }
+ 
 }
 int digi(int analval){
     if ( analval < 200)  return 0;
