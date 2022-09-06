@@ -1,10 +1,10 @@
 /*
-  ESP-NOW Demo - Transmit
-  esp-now-demo-xmit.ino
-  Sends data to Responder
-  
-  DroneBot Workshop 2022
-  https://dronebotworkshop.com
+    This code is written for Esp32 DEVKIT V1 which has inbuilt Wifi Module
+    You need 2 analog Joysticks 
+    Could work on 1 but 2 will feel better and give better control due to cliping
+    You need to download these libraries from the net. 
+    (just google them you'll find a github  repo just copy it in your library folder of arduino IDE)
+    Also Change the MAC address of the reciever (your bot) {again google on how to find MAC Address}
 */
 
 // Include Libraries
